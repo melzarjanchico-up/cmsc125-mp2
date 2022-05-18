@@ -93,7 +93,9 @@ def priority(processList:'list[Process]'):
 
 ###! shortest remaining processing time
 def srpt(processList:'list[Process]'):
-    srpt_plist = [{'p': process, 'rb': process.bt(), 'wt': 0, 'tt': 0} for process in processList]
+    # 'p' = process, 'wt' = waiting time, 'tt' = turnaround time, 'rb' = remaining burst time
+    srpt_plist = [{'p': process, 'wt': 0, 'tt': 0, 'rb': process.bt()} for process in processList]
+
     done_processes = 0          # counts done processes in srpt_plist
     c_time = 0                  # holds current time
     min = 99999                 # holds the latest minimum burst time
@@ -152,13 +154,14 @@ def srpt(processList:'list[Process]'):
 ##! round-robin
 def roundrobin(processList:'list[Process]', quantum = 4):
     # 'p' = process, 'wt' = waiting time, 'tt' = turnaround time, 'rb' = remaining burst time
-    rr_processList = [{'p': process, 'wt': 0, 'tt': 0, 'rb': process.bt()} for process in processList]
-    c_time = 0
+    rr_plist = [{'p': process, 'wt': 0, 'tt': 0, 'rb': process.bt()} for process in processList]
+    
+    c_time = 0      # holds current time
 
     while True:
         pending_check = True
 
-        for process in rr_processList:
+        for process in rr_plist:
 
             # check if a process has remaining burst
             # if returns true, it means there are pending tasks
@@ -184,7 +187,7 @@ def roundrobin(processList:'list[Process]', quantum = 4):
     avg_wt = 0
     avg_tt = 0
 
-    for process in rr_processList:
+    for process in rr_plist:
         avg_wt += process['wt']
         avg_tt += process['tt']
         table_str += f"\t{process['p']}\t{process['wt']}\t{process['tt']}\n"
